@@ -1,0 +1,7 @@
+*.exe
+*.mdb
+*.userprefs
+*.pidb
+*.suo
+*~
+bin/
