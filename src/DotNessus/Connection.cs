@@ -16,6 +16,9 @@ namespace DotNessus
         private string username;
         private string password;
 
+        // The login token.
+        private string accessToken;
+
         public Connection(string server, string username, string password, bool loginNow)
         {
             this.server = server;
@@ -26,6 +29,13 @@ namespace DotNessus
             {
                 this.Login();
             }
+        }
+
+        /// <summary>
+        /// Creates a Nessus Policy.
+        /// </summary>
+        public void CreatePolicy()
+        {
         }
 
         /// <summary>
@@ -46,6 +56,7 @@ namespace DotNessus
             // Deserialize the data and read it from the instance.
             Replies.LoginReply reply = (Replies.LoginReply)ser.ReadObject(reader, true);
             reader.Close();
+            accessToken = reply.Contents.Token;
 
             Console.WriteLine(response);
         }
