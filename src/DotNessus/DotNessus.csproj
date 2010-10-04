@@ -41,7 +41,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="WebPostRequest.cs" />
     <Compile Include="Replies\LoginReply.cs" />
-    <Compile Include="Replies\PolicyReply.cs" />
+    <Compile Include="Replies\PolicyAddReply.cs" />
     <Compile Include="Policy.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

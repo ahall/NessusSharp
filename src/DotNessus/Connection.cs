@@ -89,10 +89,10 @@ namespace DotNessus
                    XmlDictionaryReader.CreateTextReader(Encoding.ASCII.GetBytes(response),
                                                         new XmlDictionaryReaderQuotas()))
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(Replies.PolicyReply));
+                DataContractSerializer ser = new DataContractSerializer(typeof(Replies.PolicyAddReply));
 
                 // Deserialize the data and read it from the instance.
-                Replies.PolicyReply reply = (Replies.PolicyReply)ser.ReadObject(reader, true);
+                Replies.PolicyAddReply reply = (Replies.PolicyAddReply)ser.ReadObject(reader, true);
                 if (reply.Status != "OK")
                 {
                     throw new Exception("Login reply failed");

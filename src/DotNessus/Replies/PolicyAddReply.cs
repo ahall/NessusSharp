@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DotNessus.Replies
 {
     [DataContract(Name = "reply", Namespace = "")]
-    public class PolicyReply
+    public class PolicyAddReply
     {
         [DataContract(Name = "policy", Namespace = "")]
         public class PolicyItem
@@ -42,7 +42,7 @@ namespace DotNessus.Replies
         [DataMember(Name = "contents")]
         public ReplyContents Contents { get; set; }
 
-        public PolicyReply ()
+        public PolicyAddReply ()
         {
         }
     }
