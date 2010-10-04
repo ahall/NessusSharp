@@ -55,6 +55,17 @@ namespace DotNessus
             return sr.ReadToEnd();
         }
 
+        public override string ToString()
+        {
+            string ret = "";
+            foreach (string qrydata in queryData)
+            {
+                ret += qrydata + "\n";
+            }
+
+            return ret;
+        }
+
     }
 }
 
