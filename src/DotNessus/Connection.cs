@@ -137,6 +137,30 @@ namespace DotNessus
             policy.Id = Policy.INVALID_ID;
         }
 
+        public void CreateScan(Scan scan, Policy policy)
+        {
+            string url = BuildUrl("scan", "new");
+            WebPostRequest request = new WebPostRequest(url);
+            request.Add("token", accessToken);
+
+            request.Add("scan_name", scan.Name);
+            request.Add("target", scan.EncodeTargets());
+            request.Add("policy_id", policy.Id.ToString());
+            string response = request.GetResponse();
+
+            Replies.ScanNewReply reply = GetReply<Replies.ScanNewReply>(response);
+            if (reply.Status != "OK")
+            {
+                throw new Exception("Login reply failed");
+            }
+
+            scan.Uuid = reply.Contents.ScanItem.Uuid;
+
+            // Start time is given in UTC seconds so we must add it up and store it in UTC.
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            scan.StartTime = epoch.AddSeconds(reply.Contents.ScanItem.StartTime);
+        }
+
         /// <summary>
         /// Deserializes a reply from the response.
         /// </summary>

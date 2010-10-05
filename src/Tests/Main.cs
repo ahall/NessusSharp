@@ -17,9 +17,11 @@ namespace Tests
 
             conn.CreatePolicy(policy);
 
+            Scan scan = new Scan("fishers");
+            conn.CreateScan(scan, policy);
+
             // Wipes all policies.
             conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
-
         }
     }
 }

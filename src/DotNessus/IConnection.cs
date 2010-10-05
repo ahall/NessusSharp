@@ -31,6 +31,17 @@ namespace DotNessus
         /// A <see cref="Policy"/>
         /// </param>
         void DeletePolicy(Policy policy);
+
+        /// <summary>
+        /// Creates a scan for a specific policy.
+        /// </summary>
+        /// <param name="scan">
+        /// A <see cref="Scan"/>
+        /// </param>
+        /// <param name="policy">
+        /// A <see cref="Policy"/>
+        /// </param>
+        void CreateScan(Scan scan , Policy policy);
     }
 }
 

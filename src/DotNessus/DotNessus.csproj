@@ -47,6 +47,10 @@
     <Compile Include="Replies\PolicyListReply.cs" />
     <Compile Include="Replies\PolicyDeleteReply.cs" />
     <Compile Include="IConnection.cs" />
+    <Compile Include="Scan.cs" />
+    <Compile Include="Replies\ScanNewReply.cs" />
+    <Compile Include="Replies\ScanItem.cs" />
+    <Compile Include="Report.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
