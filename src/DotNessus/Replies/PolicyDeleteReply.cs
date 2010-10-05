@@ -1,20 +1,21 @@
 using System;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
 
 namespace DotNessus.Replies
 {
+
     [DataContract(Name = "reply", Namespace = "")]
-    internal class PolicyAddReply
+    internal class PolicyDeleteReply
     {
+
         /// <summary>
         /// The contents of the reply.
         /// </summary>
         [DataContract(Name = "contents", Namespace = "")]
         public class ReplyContents
         {
-            [DataMember(Name = "policy")]
-            public PolicyItem PolicyItem { get; set; }
+            [DataMember(Name = "policyID")]
+            public int PolicyID { get; set; }
         }
 
         [DataMember(Name = "seq")]
@@ -26,7 +27,7 @@ namespace DotNessus.Replies
         [DataMember(Name = "contents")]
         public ReplyContents Contents { get; set; }
 
-        public PolicyAddReply ()
+        public PolicyDeleteReply()
         {
         }
     }

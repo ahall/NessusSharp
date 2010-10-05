@@ -7,8 +7,10 @@ namespace DotNessus
     /// </summary>
     public class Policy
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
+        public const int INVALID_ID = 0;
+
+        public int Id { get; internal set; }
+        public string Name { get; internal set; }
         private Dictionary<string, string> parameters;
 
         public Dictionary<string, string> Parameters

@@ -43,6 +43,10 @@
     <Compile Include="Replies\LoginReply.cs" />
     <Compile Include="Replies\PolicyAddReply.cs" />
     <Compile Include="Policy.cs" />
+    <Compile Include="Replies\PolicyItem.cs" />
+    <Compile Include="Replies\PolicyListReply.cs" />
+    <Compile Include="Replies\PolicyDeleteReply.cs" />
+    <Compile Include="IConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

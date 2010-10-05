@@ -2,15 +2,14 @@ using System;
 using System.Xml;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Collections.Generic;
 
 namespace DotNessus
 {
-
-
     /// <summary>
     /// A connection to a Nessus server.
     /// </summary>
-    public class Connection
+    public class Connection : IConnection
     {
         /// <summary>
         /// Hostname of the server.
@@ -36,45 +35,57 @@ namespace DotNessus
         /// A <see cref="System.String"/>
         /// </param>
         public Connection(string username, string password)
-            : this("localhost", username, password, true)
+            : this("localhost", username, password)
         {
         }
 
-        public Connection(string username, string password, bool loginNow)
-            : this("localhost", username, password, loginNow)
-        {
-        }
-
-        public Connection(string hostname, string username, string password, bool loginNow)
+        public Connection(string hostname, string username, string password)
         {
             this.hostname = hostname;
             this.username = username;
             this.password = password;
-            this.baseUrl = string.Format(BASEURL_TEMPLATE, hostname);
+            this.baseUrl = string.Format(BASEURL_TEMPLATE, this.hostname);
 
-            if (loginNow)
-            {
-                this.Login();
-            }
+            this.Login();
         }
 
-        private string buildUrl(params string[] components)
+        private string BuildUrl(params string[] components)
         {
             string suffix = string.Join("/", components);
             return string.Format("{0}/{1}", baseUrl, suffix);
         }
 
-        /// <summary>
-        /// Creates a new Nessus Policy on the backend.
-        /// </summary>
+        public List<Policy> ListPolicies()
+        {
+            List<Policy> policies = new List<Policy>();
+
+            string url = BuildUrl("policy", "list");
+            WebPostRequest request = new WebPostRequest(url);
+            request.Add("token", accessToken);
+
+            string response = request.GetResponse();
+            Replies.PolicyListReply reply = GetReply<Replies.PolicyListReply>(response);
+            if (reply.Status != "OK")
+            {
+                throw new Exception("Login reply failed");
+            }
+
+            foreach (Replies.PolicyItem polItem in reply.Contents.Policies)
+            {
+                policies.Add(new Policy(polItem.PolicyID, polItem.PolicyName));
+            }
+
+            return policies;
+        }
+
         public void CreatePolicy(Policy policy)
         {
-            string url = buildUrl("policy", "add");
+            string url = BuildUrl("policy", "add");
             WebPostRequest request = new WebPostRequest(url);
             request.Add("token", accessToken);
 
             // Nessus XMLrpc states it wants an ID of 0 when creating.
-            request.Add("policy_id", "0");
+            request.Add("policy_id", Policy.INVALID_ID.ToString());
             request.Add("policy_name", policy.Name);
 
             // Now copy all the params from the policy into the request.
@@ -84,48 +95,88 @@ namespace DotNessus
             }
 
             string response = request.GetResponse();
+            Replies.PolicyAddReply reply = GetReply<Replies.PolicyAddReply>(response);
+            if (reply.Status != "OK")
+            {
+                throw new Exception("Login reply failed");
+            }
 
+            policy.Id = reply.Contents.PolicyItem.PolicyID;
+            policy.Name = reply.Contents.PolicyItem.PolicyName;
+        }
+
+        /// <summary>
+        /// Deletes a policy from the backend.
+        /// </summary>
+        /// <param name="policy">
+        /// A <see cref="Policy"/>
+        /// </param>
+        public void DeletePolicy(Policy policy)
+        {
+            string url = BuildUrl("policy", "delete");
+            WebPostRequest request = new WebPostRequest(url);
+            request.Add("token", accessToken);
+
+            // Nessus XMLrpc states it wants an ID of 0 when creating.
+            request.Add("policy_id", policy.Id.ToString());
+            request.Add("policy_name", policy.Name);
+
+            // Now copy all the params from the policy into the request.
+            foreach (var parm in policy.Parameters)
+            {
+                request.Add(parm.Key, parm.Value);
+            }
+
+            string response = request.GetResponse();
+            Replies.PolicyDeleteReply reply = GetReply<Replies.PolicyDeleteReply>(response);
+            if (reply.Status != "OK")
+            {
+                throw new Exception("Login reply failed");
+            }
+
+            policy.Id = Policy.INVALID_ID;
+        }
+
+        /// <summary>
+        /// Deserializes a reply from the response.
+        /// </summary>
+        /// <param name="response">
+        /// A <see cref="System.String"/>
+        /// </param>
+        /// <returns>
+        /// A <see cref="T"/>
+        /// </returns>
+        private T GetReply<T>(string response)
+        {
             using (XmlDictionaryReader reader =
                    XmlDictionaryReader.CreateTextReader(Encoding.ASCII.GetBytes(response),
                                                         new XmlDictionaryReaderQuotas()))
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(Replies.PolicyAddReply));
+                DataContractSerializer ser = new DataContractSerializer(typeof(T));
 
                 // Deserialize the data and read it from the instance.
-                Replies.PolicyAddReply reply = (Replies.PolicyAddReply)ser.ReadObject(reader, true);
-                if (reply.Status != "OK")
-                {
-                    throw new Exception("Login reply failed");
-                }
+                return (T)ser.ReadObject(reader, true);
             }
         }
 
         /// <summary>
         /// Connects to the server and attempts to log in.
         /// </summary>
-        public void Login()
+        private void Login()
         {
-            string url = buildUrl("login");
+            string url = BuildUrl("login");
             WebPostRequest request = new WebPostRequest(url);
             request.Add("login", username);
             request.Add("password", password);
             string response = request.GetResponse();
 
-            using (XmlDictionaryReader reader =
-                   XmlDictionaryReader.CreateTextReader(Encoding.ASCII.GetBytes(response),
-                                                        new XmlDictionaryReaderQuotas()))
+            Replies.LoginReply reply = GetReply<Replies.LoginReply>(response);
+            if (reply.Status != "OK")
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(Replies.LoginReply));
-
-                // Deserialize the data and read it from the instance.
-                Replies.LoginReply reply = (Replies.LoginReply)ser.ReadObject(reader, true);
-                if (reply.Status != "OK")
-                {
-                    throw new Exception("Login reply failed");
-                }
-
-                accessToken = reply.Contents.Token;
+                throw new Exception("Login reply failed");
             }
+
+            accessToken = reply.Contents.Token;
         }
     }
 }

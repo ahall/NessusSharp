@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using DotNessus;
+using System.Collections.Generic;
 
 namespace Tests
 {
@@ -7,13 +9,17 @@ namespace Tests
     {
         public static void Main (string[] args)
         {
-            Connection conn = new Connection("ahall", "temp123");
+            IConnection conn = new Connection("ahall", "temp123");
 
             Policy policy = new Policy("ahallpolicy");
-            //policy.AddSmbCredentials("smbuser", "smbpass");
-            //policy.AddSshCredentials("sshuser", "sshpass");
+            policy.AddSmbCredentials("smbuser", "smbpass");
+            policy.AddSshCredentials("sshuser", "sshpass");
 
             conn.CreatePolicy(policy);
+
+            // Wipes all policies.
+            conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
+
         }
     }
 }

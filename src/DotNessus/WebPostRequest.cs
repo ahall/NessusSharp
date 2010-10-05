@@ -45,9 +45,11 @@ namespace DotNessus
             request.ContentLength = parameters.Length;
 
             // We write the parameters into the request
-            StreamWriter sw = new StreamWriter(request.GetRequestStream());
-            sw.Write(parameters);
-            sw.Close();
+            using (StreamWriter sw = new StreamWriter(request.GetRequestStream()))
+            {
+                sw.Write(parameters);
+                sw.Flush();
+            }
 
             // Execute the query
             var response =  request.GetResponse() as HttpWebResponse;
