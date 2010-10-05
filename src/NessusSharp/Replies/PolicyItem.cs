@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace DotNessus.Replies
+namespace NessusSharp.Replies
 {
     [DataContract(Name = "policy", Namespace = "")]
     internal class PolicyItem

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Collections.Generic;
 
-namespace DotNessus
+namespace NessusSharp
 {
     /// <summary>
     /// A connection to a Nessus server.

@@ -40,9 +40,9 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNessus\DotNessus.csproj">
+    <ProjectReference Include="..\NessusSharp\NessusSharp.csproj">
       <Project>{A29001D6-489D-410B-A0E6-A9FA8C4A9BD1}</Project>
-      <Name>DotNessus</Name>
+      <Name>NessusSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

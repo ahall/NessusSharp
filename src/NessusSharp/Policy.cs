@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace DotNessus
+namespace NessusSharp
 {
     /// <summary>
     /// A nessus policy

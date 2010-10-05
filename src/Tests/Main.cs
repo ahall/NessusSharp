@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using DotNessus;
+using NessusSharp;
 using System.Collections.Generic;
 
 namespace Tests
@@ -18,6 +18,8 @@ namespace Tests
             conn.CreatePolicy(policy);
 
             Scan scan = new Scan("fishers");
+            scan.Targets.Add("127.0.0.1");
+            scan.Targets.Add("127.0.0.2");
             conn.CreateScan(scan, policy);
 
             // Wipes all policies.

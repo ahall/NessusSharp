@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.Serialization;
-namespace DotNessus.Replies
+namespace NessusSharp.Replies
 {
     /// <summary>
     /// A reply we get from login in to the nessus interface.

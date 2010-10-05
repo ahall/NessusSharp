@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DotNessus
+namespace NessusSharp
 {
     /// <summary>
     /// Represents a connection to a Nessus XMLrpc backend.

@@ -1,21 +1,17 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace DotNessus.Replies
+namespace NessusSharp.Replies
 {
-
     [DataContract(Name = "reply", Namespace = "")]
-    internal class PolicyDeleteReply
+    internal class ScanNewReply
     {
 
-        /// <summary>
-        /// The contents of the reply.
-        /// </summary>
         [DataContract(Name = "contents", Namespace = "")]
         public class ReplyContents
         {
-            [DataMember(Name = "policyID")]
-            public int PolicyID { get; set; }
+            [DataMember(Name = "scan")]
+            public ScanItem ScanItem { get; set; }
         }
 
         [DataMember(Name = "seq")]
@@ -27,7 +23,7 @@ namespace DotNessus.Replies
         [DataMember(Name = "contents")]
         public ReplyContents Contents { get; set; }
 
-        public PolicyDeleteReply()
+        public ScanNewReply ()
         {
         }
     }
