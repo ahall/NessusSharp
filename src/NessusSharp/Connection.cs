@@ -3,6 +3,8 @@ using System.Xml;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Collections.Generic;
+using System.Net;
+using System.IO;
 
 namespace NessusSharp
 {
@@ -19,51 +21,30 @@ namespace NessusSharp
         private string username;
         private string password;
         private string baseUrl;
-
-        private static readonly string BASEURL_TEMPLATE = "https://{0}:8834";
+        private Uri baseUri;
 
         // The login token.
         private string accessToken;
+        private static readonly DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
-        /// <summary>
-        /// Constructs a Connection and logins immediately.
-        /// </summary>
-        /// <param name="username">
-        /// A <see cref="System.String"/>
-        /// </param>
-        /// <param name="password">
-        /// A <see cref="System.String"/>
-        /// </param>
-        public Connection(string username, string password)
-            : this("localhost", username, password)
+        public Connection(Uri baseUri, string username, string password)
         {
-        }
-
-        public Connection(string hostname, string username, string password)
-        {
-            this.hostname = hostname;
+            this.baseUri = baseUri;
             this.username = username;
             this.password = password;
-            this.baseUrl = string.Format(BASEURL_TEMPLATE, this.hostname);
 
             this.Login();
-        }
-
-        private string BuildUrl(params string[] components)
-        {
-            string suffix = string.Join("/", components);
-            return string.Format("{0}/{1}", baseUrl, suffix);
         }
 
         public List<Policy> ListPolicies()
         {
             List<Policy> policies = new List<Policy>();
 
-            string url = BuildUrl("policy", "list");
-            WebPostRequest request = new WebPostRequest(url);
+            Uri uri = new Uri(baseUri, "policy/list");
+            WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
 
-            string response = request.GetResponse();
+            var response = request.GetResponse();
             Replies.PolicyListReply reply = GetReply<Replies.PolicyListReply>(response);
             if (reply.Status != "OK")
             {
@@ -80,8 +61,8 @@ namespace NessusSharp
 
         public void CreatePolicy(Policy policy)
         {
-            string url = BuildUrl("policy", "add");
-            WebPostRequest request = new WebPostRequest(url);
+            Uri uri = new Uri(baseUri, "policy/add");
+            WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
 
             // Nessus XMLrpc states it wants an ID of 0 when creating.
@@ -94,7 +75,7 @@ namespace NessusSharp
                 request.Add(parm.Key, parm.Value);
             }
 
-            string response = request.GetResponse();
+            var response = request.GetResponse();
             Replies.PolicyAddReply reply = GetReply<Replies.PolicyAddReply>(response);
             if (reply.Status != "OK")
             {
@@ -113,8 +94,8 @@ namespace NessusSharp
         /// </param>
         public void DeletePolicy(Policy policy)
         {
-            string url = BuildUrl("policy", "delete");
-            WebPostRequest request = new WebPostRequest(url);
+            Uri uri = new Uri(baseUri, "policy/delete");
+            WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
 
             // Nessus XMLrpc states it wants an ID of 0 when creating.
@@ -127,7 +108,7 @@ namespace NessusSharp
                 request.Add(parm.Key, parm.Value);
             }
 
-            string response = request.GetResponse();
+            var response = request.GetResponse();
             Replies.PolicyDeleteReply reply = GetReply<Replies.PolicyDeleteReply>(response);
             if (reply.Status != "OK")
             {
@@ -139,14 +120,14 @@ namespace NessusSharp
 
         public void CreateScan(Scan scan, Policy policy)
         {
-            string url = BuildUrl("scan", "new");
-            WebPostRequest request = new WebPostRequest(url);
+            Uri uri = new Uri(baseUri, "scan/new");
+            WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
 
             request.Add("scan_name", scan.Name);
             request.Add("target", scan.EncodeTargets());
             request.Add("policy_id", policy.Id.ToString());
-            string response = request.GetResponse();
+            HttpWebResponse response = request.GetResponse();
 
             Replies.ScanNewReply reply = GetReply<Replies.ScanNewReply>(response);
             if (reply.Status != "OK")
@@ -161,6 +142,31 @@ namespace NessusSharp
             scan.StartTime = epoch.AddSeconds(reply.Contents.ScanItem.StartTime);
         }
 
+        public List<Report> ListReports()
+        {
+            List<Report> reports = new List<Report>();
+
+            Uri uri = new Uri(baseUri, "report/list");
+            WebPostRequest request = new WebPostRequest(uri);
+            request.Add("token", accessToken);
+
+            HttpWebResponse response = request.GetResponse();
+            Replies.ReportListReply reply = GetReply<Replies.ReportListReply>(response);
+            if (reply.Status != "OK")
+            {
+                throw new Exception("ReportList reply failed");
+            }
+
+            foreach (Replies.ReportItem reportItem in reply.Contents.Reports)
+            {
+                Report.ScanStatus scanStatus = (Report.ScanStatus)Enum.Parse(typeof(Report.ScanStatus), reportItem.Status, true);
+                DateTime timeStamp = EPOCH.AddSeconds(reportItem.TimeStamp);
+                reports.Add(new Report(timeStamp, scanStatus, reportItem.Name));
+            }
+
+            return reports;
+        }
+
         /// <summary>
         /// Deserializes a reply from the response.
         /// </summary>
@@ -170,10 +176,11 @@ namespace NessusSharp
         /// <returns>
         /// A <see cref="T"/>
         /// </returns>
-        private T GetReply<T>(string response)
+        private T GetReply<T>(HttpWebResponse response)
         {
+            string strResponse = new StreamReader(response.GetResponseStream()).ReadToEnd();
             using (XmlDictionaryReader reader =
-                   XmlDictionaryReader.CreateTextReader(Encoding.ASCII.GetBytes(response),
+                   XmlDictionaryReader.CreateTextReader(Encoding.ASCII.GetBytes(strResponse),
                                                         new XmlDictionaryReaderQuotas()))
             {
                 DataContractSerializer ser = new DataContractSerializer(typeof(T));
@@ -188,11 +195,11 @@ namespace NessusSharp
         /// </summary>
         private void Login()
         {
-            string url = BuildUrl("login");
-            WebPostRequest request = new WebPostRequest(url);
+            Uri uri = new Uri(baseUri, "login");
+            WebPostRequest request = new WebPostRequest(uri);
             request.Add("login", username);
             request.Add("password", password);
-            string response = request.GetResponse();
+            HttpWebResponse response = request.GetResponse();
 
             Replies.LoginReply reply = GetReply<Replies.LoginReply>(response);
             if (reply.Status != "OK")

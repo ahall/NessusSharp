@@ -42,6 +42,14 @@ namespace NessusSharp
         /// A <see cref="Policy"/>
         /// </param>
         void CreateScan(Scan scan , Policy policy);
+
+        /// <summary>
+        /// Lists all reports
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Report"/>
+        /// </returns>
+        List<Report> ListReports();
     }
 }
 

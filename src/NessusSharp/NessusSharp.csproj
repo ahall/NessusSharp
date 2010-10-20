@@ -51,6 +51,8 @@
     <Compile Include="Replies\ScanNewReply.cs" />
     <Compile Include="Replies\ScanItem.cs" />
     <Compile Include="Report.cs" />
+    <Compile Include="Replies\ReportListReply.cs" />
+    <Compile Include="Replies\ReportItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

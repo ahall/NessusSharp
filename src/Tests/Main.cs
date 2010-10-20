@@ -9,7 +9,16 @@ namespace Tests
     {
         public static void Main (string[] args)
         {
-            IConnection conn = new Connection("ahall", "temp123");
+            Uri baseUri = new Uri("https://localhost:8834");
+            IConnection conn = new Connection(baseUri, "ahall", "temp123");
+
+            List<Report> reports = conn.ListReports();
+            foreach (Report report in reports)
+            {
+                Console.WriteLine(report.Name);
+                Console.WriteLine(report.Status);
+                Console.WriteLine(report.TimeStamp);
+            }
 
             Policy policy = new Policy("ahallpolicy");
             policy.AddSmbCredentials("smbuser", "smbpass");
@@ -17,10 +26,12 @@ namespace Tests
 
             conn.CreatePolicy(policy);
 
+            /*
             Scan scan = new Scan("fishers");
             scan.Targets.Add("127.0.0.1");
             scan.Targets.Add("127.0.0.2");
             conn.CreateScan(scan, policy);
+            */
 
             // Wipes all policies.
             conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
