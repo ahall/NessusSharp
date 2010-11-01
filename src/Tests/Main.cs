@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using NessusSharp;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Tests
 {
@@ -20,11 +21,16 @@ namespace Tests
                 Console.WriteLine(report.TimeStamp);
             }
 
-            Policy policy = new Policy("ahallpolicy");
-            policy.AddSmbCredentials("smbuser", "smbpass");
-            policy.AddSshCredentials("sshuser", "sshpass");
+            using (FileStream toWrite = File.OpenWrite("/tmp/writeit.xml"))
+            {
+                conn.DownloadReport(reports[0].Name, toWrite);
+            }
 
-            conn.CreatePolicy(policy);
+            //Policy policy = new Policy("ahallpolicy");
+            //policy.AddSmbCredentials("smbuser", "smbpass");
+            //policy.AddSshCredentials("sshuser", "sshpass");
+
+            //conn.CreatePolicy(policy);
 
             /*
             Scan scan = new Scan("fishers");
@@ -34,7 +40,7 @@ namespace Tests
             */
 
             // Wipes all policies.
-            conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
+            //conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
         }
     }
 }

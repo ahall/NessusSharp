@@ -13,14 +13,8 @@ namespace NessusSharp
     /// </summary>
     public class Connection : IConnection
     {
-        /// <summary>
-        /// Hostname of the server.
-        /// </summary>
-        private string hostname;
-
         private string username;
         private string password;
-        private string baseUrl;
         private Uri baseUri;
 
         // The login token.
@@ -32,7 +26,6 @@ namespace NessusSharp
             this.baseUri = baseUri;
             this.username = username;
             this.password = password;
-
             this.Login();
         }
 
@@ -165,6 +158,29 @@ namespace NessusSharp
             }
 
             return reports;
+        }
+
+        public void DownloadReport(string name, Stream outStream)
+        {
+            Uri uri = new Uri(baseUri, "file/report/download");
+            WebPostRequest request = new WebPostRequest(uri);
+            request.Add("token", accessToken);
+            request.AddIfNotEmpty("report", name);
+
+            HttpWebResponse response = request.GetResponse();
+            Stream inStream = response.GetResponseStream();
+
+            byte[] buffer = new byte[4096];
+            while (true)
+            {
+                int bytesRead = inStream.Read(buffer, 0, 4096);
+                if (bytesRead == 0)
+                {
+                    break;
+                }
+
+                outStream.Write(buffer, 0, bytesRead);
+            }
         }
 
         /// <summary>

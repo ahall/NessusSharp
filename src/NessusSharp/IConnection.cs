@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NessusSharp
 {
@@ -50,6 +51,17 @@ namespace NessusSharp
         /// A <see cref="Report"/>
         /// </returns>
         List<Report> ListReports();
+
+        /// <summary>
+        /// Downloads report with a given name and writes it to the output stream.
+        /// </summary>
+        /// <param name="name">
+        /// A <see cref="System.String"/>
+        /// </param>
+        /// <param name="outStream">
+        /// A <see cref="Stream"/>
+        /// </param>
+        void DownloadReport(string name, Stream outStream);
     }
 }
 
