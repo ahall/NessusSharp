@@ -3,6 +3,9 @@ using System.Linq;
 using NessusSharp;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
+using System.Xml.Xsl;
+using System.Xml.XPath;
 
 namespace Tests
 {
@@ -23,7 +26,10 @@ namespace Tests
 
             using (FileStream toWrite = File.OpenWrite("/tmp/writeit.xml"))
             {
-                conn.DownloadReport(reports[0].Name, toWrite);
+                if (reports.Count > 0)
+                {
+                    conn.DownloadReport(reports[0].Name, toWrite);
+                }
             }
 
             //Policy policy = new Policy("ahallpolicy");
