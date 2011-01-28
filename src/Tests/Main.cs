@@ -14,7 +14,7 @@ namespace Tests
         public static void Main (string[] args)
         {
             Uri baseUri = new Uri("https://localhost:8834");
-            IConnection conn = new Connection(baseUri, "ahall", "temp123");
+            IConnection conn = new Connection(baseUri, "cns", "temp123");
 
             List<Report> reports = conn.ListReports();
             foreach (Report report in reports)
@@ -32,11 +32,11 @@ namespace Tests
                 }
             }
 
-            //Policy policy = new Policy("ahallpolicy");
-            //policy.AddSmbCredentials("smbuser", "smbpass");
-            //policy.AddSshCredentials("sshuser", "sshpass");
+            Policy policy = new Policy("ahallpolicy");
+            policy.AddSmbCredentials("smbuser", "smbpass");
+            policy.AddSshCredentials("sshuser", "sshpass");
 
-            //conn.CreatePolicy(policy);
+            conn.CreatePolicy(policy);
 
             /*
             Scan scan = new Scan("fishers");

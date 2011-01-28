@@ -20,17 +20,23 @@ namespace NessusSharp
         // The login token.
         private string accessToken;
         private static readonly DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        private bool authenticated;
 
         public Connection(Uri baseUri, string username, string password)
         {
             this.baseUri = baseUri;
             this.username = username;
             this.password = password;
-            this.Login();
+            this.authenticated = false;
         }
 
         public List<Policy> ListPolicies()
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             List<Policy> policies = new List<Policy>();
 
             Uri uri = new Uri(baseUri, "policy/list");
@@ -54,6 +60,11 @@ namespace NessusSharp
 
         public void CreatePolicy(Policy policy)
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             Uri uri = new Uri(baseUri, "policy/add");
             WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
@@ -87,6 +98,11 @@ namespace NessusSharp
         /// </param>
         public void DeletePolicy(Policy policy)
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             Uri uri = new Uri(baseUri, "policy/delete");
             WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
@@ -113,6 +129,11 @@ namespace NessusSharp
 
         public void CreateScan(Scan scan, Policy policy)
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             Uri uri = new Uri(baseUri, "scan/new");
             WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
@@ -137,6 +158,11 @@ namespace NessusSharp
 
         public List<Report> ListReports()
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             List<Report> reports = new List<Report>();
 
             Uri uri = new Uri(baseUri, "report/list");
@@ -162,6 +188,11 @@ namespace NessusSharp
 
         public void DownloadReport(string name, Stream outStream)
         {
+            if (!authenticated)
+            {
+                Login();
+            }
+
             Uri uri = new Uri(baseUri, "file/report/download");
             WebPostRequest request = new WebPostRequest(uri);
             request.Add("token", accessToken);
@@ -224,6 +255,7 @@ namespace NessusSharp
             }
 
             accessToken = reply.Contents.Token;
+            authenticated = true;
         }
     }
 }
