@@ -44,10 +44,15 @@ namespace NessusSharp
         /// <param name="password">
         /// A <see cref="System.String"/>
         /// </param>
-        public void AddSmbCredentials(string username, string password)
+        public void AddSmbCredentials(string username, string password, string domain = null)
         {
             Parameters.Add("Login configurations[entry]:SMB account :", username);
             Parameters.Add("Login configurations[password]:SMB password :", password);
+
+            if (domain != null)
+            {
+                Parameters.Add("Login configurations[entry]:SMB domain (optional) :", domain);
+            }
         }
 
         public void AddSshCredentials(string username, string password)

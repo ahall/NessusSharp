@@ -240,7 +240,7 @@ namespace NessusSharp
         /// <summary>
         /// Connects to the server and attempts to log in.
         /// </summary>
-        private void Login()
+        public void Login()
         {
             Uri uri = new Uri(baseUri, "login");
             WebPostRequest request = new WebPostRequest(uri);

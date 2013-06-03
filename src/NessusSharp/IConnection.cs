@@ -62,6 +62,11 @@ namespace NessusSharp
         /// A <see cref="Stream"/>
         /// </param>
         void DownloadReport(string name, Stream outStream);
+
+        /// <summary>
+        /// Force login, normally done lazily. Good to avoid the idle timeout.
+        /// </summary>
+        void Login();
     }
 }
 

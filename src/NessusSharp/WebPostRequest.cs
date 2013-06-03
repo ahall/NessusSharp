@@ -17,20 +17,10 @@ namespace NessusSharp
 
         public WebPostRequest(Uri uri, CookieContainer cookies)
         {
-            ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
-
             request = HttpWebRequest.Create(uri) as HttpWebRequest;
             request.CookieContainer = cookies;
             request.Method = "POST";
             queryData = new List<string>();
-        }
-
-        private bool AcceptAllCertifications(object sender,
-                                             System.Security.Cryptography.X509Certificates.X509Certificate certification,
-                                             System.Security.Cryptography.X509Certificates.X509Chain chain,
-                                             System.Net.Security.SslPolicyErrors sslPolicyErrors)
-        {
-            return true;
         }
 
         public void Add(string key, string value)
