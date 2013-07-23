@@ -7,12 +7,13 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.XPath;
 
-namespace Tests
+namespace NessusSharp.Tests
 {
     class MainClass
     {
         public static void Main (string[] args)
         {
+            /*
             Uri baseUri = new Uri("https://localhost:8834");
             IConnection conn = new Connection(baseUri, "cns", "temp123");
 
@@ -38,15 +39,20 @@ namespace Tests
 
             conn.CreatePolicy(policy);
 
-            /*
             Scan scan = new Scan("fishers");
             scan.Targets.Add("127.0.0.1");
             scan.Targets.Add("127.0.0.2");
             conn.CreateScan(scan, policy);
-            */
 
             // Wipes all policies.
             //conn.ListPolicies().ForEach(x => conn.DeletePolicy(x));
+            */
+
+            // Playing with the nessus parser.
+            string path = "/Users/ahall/Downloads/nessus.nessus";
+            var parser = new NessusParser(path);
+            var report = parser.Run();
+            int al = 14;
         }
     }
 }

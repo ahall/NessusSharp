@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NessusSharp", "NessusSharp\NessusSharp.csproj", "{A29001D6-489D-410B-A0E6-A9FA8C4A9BD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4BEFE8F6-CFEB-4461-86D4-1BF2F8DB1C23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NessusSharp.Tests", "Tests\NessusSharp.Tests.csproj", "{4BEFE8F6-CFEB-4461-86D4-1BF2F8DB1C23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +21,6 @@ Global
 		{A29001D6-489D-410B-A0E6-A9FA8C4A9BD1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Tests\Tests.csproj
+		StartupItem = Tests\NessusSharp.Tests.csproj
 	EndGlobalSection
 EndGlobal

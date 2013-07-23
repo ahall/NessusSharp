@@ -3,7 +3,9 @@ About
 
 This library provides an easy access to the Nessus XMLrpc interface introduced
 in Nessus 4.2.0 and later. With this library one can create policies and
-schedule scans
+schedule scans.
+
+It also supports parsing .nessus reports.
 
 Compatibility
 -------------
