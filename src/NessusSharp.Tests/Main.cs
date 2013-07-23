@@ -52,6 +52,16 @@ namespace NessusSharp.Tests
             string path = "/Users/ahall/Downloads/nessus.nessus";
             var parser = new NessusParser(path);
             var report = parser.Run();
+
+            foreach (var host in report.Hosts)
+            {
+                Console.WriteLine("Host: " + host.Name);
+                Console.WriteLine("High: " + host.NumVulnHigh);
+                Console.WriteLine("Medium: " + host.NumVulnMedium);
+                Console.WriteLine("Low: " + host.NumVulnLow);
+            }
+
+
             int al = 14;
         }
     }

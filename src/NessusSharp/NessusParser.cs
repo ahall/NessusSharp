@@ -24,6 +24,11 @@ namespace NessusSharp
         public string Name { get; set; }
         public List<ParseReportHostItem> Items { get; set; }
         public ParseHostProperties Properties { get; set; }
+
+        public int NumOpenPorts { get; set; }
+        public int NumVulnHigh { get; set; }
+        public int NumVulnMedium { get; set; }
+        public int NumVulnLow { get; set; }
     }
 
     public class ParseReport
@@ -83,11 +88,27 @@ namespace NessusSharp
 
                     parseReportHostItem.Synopsis = (string)item.Element("synopsis");
                     parseReportHostItem.Description = (string)item.Element("description");
+
                     parseReportHostItem.RiskFactor = (string)item.Element("risk_factor");
+                    switch (parseReportHostItem.RiskFactor)
+                    {
+                        case "High":
+                            parseHost.NumVulnHigh++;
+                            break;
+                        case "Medium":
+                            parseHost.NumVulnMedium++;
+                            break;
+                        case "None":
+                        case "Low":
+                            parseHost.NumVulnLow++;
+                            break;
+                        default:
+                            break;
+                    }
+
                     parseReportHostItem.Solution = (string)item.Element("solution");
                     parseReportHostItem.PluginType = (string)item.Element("plugin_type");
                     parseReportHostItem.PluginOutput = (string)item.Element("plugin_output");
-
                     parseHost.Items.Add(parseReportHostItem);
                 }
 
@@ -129,6 +150,9 @@ namespace NessusSharp
 
                     parseHost.Properties = parseHostProps;
                 }
+
+                // TODO: Need to check a special plugin to get this, leaving as 0 for now.
+                parseHost.NumOpenPorts = 0;
 
                 parseReport.Hosts.Add(parseHost);
             }
