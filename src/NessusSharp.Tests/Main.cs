@@ -6,13 +6,27 @@ using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.XPath;
+using System.Net;
 
 namespace NessusSharp.Tests
 {
     class MainClass
     {
+        private static bool AcceptAllCertifications(
+                                             object sender,
+                                             System.Security.Cryptography.X509Certificates.X509Certificate certification,
+                                             System.Security.Cryptography.X509Certificates.X509Chain chain,
+                                             System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
+
+
         public static void Main (string[] args)
         {
+            // Don't validate certificates.
+            ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
+
             /*
             Uri baseUri = new Uri("https://localhost:8834");
             IConnection conn = new Connection(baseUri, "cns", "temp123");
