@@ -25,10 +25,12 @@ namespace NessusSharp
         public List<ParseReportHostItem> Items { get; set; }
         public ParseHostProperties Properties { get; set; }
 
-        public int NumOpenPorts { get; set; }
-        public int NumVulnHigh { get; set; }
-        public int NumVulnMedium { get; set; }
-        public int NumVulnLow { get; set; }
+        public long NumOpenPorts { get; set; }
+        public long NumVulnCritical { get; set; }
+        public long NumVulnHigh { get; set; }
+        public long NumVulnMedium { get; set; }
+        public long NumVulnLow { get; set; }
+        public long NumVulnNone { get; set; }
     }
 
     public class ParseReport
@@ -45,6 +47,15 @@ namespace NessusSharp
         public string HostFqdn { get; set; }
         public string NetBiosName { get; set; }
         public string MacAddress { get; set; }
+    }
+
+    public class RiskFactor
+    {
+        public const string Critical = "Critical";
+        public const string High = "High";
+        public const string Medium = "Medium";
+        public const string Low = "Low";
+        public const string None = "None";
     }
 
     /// <summary>
@@ -92,17 +103,20 @@ namespace NessusSharp
                     parseReportHostItem.RiskFactor = (string)item.Element("risk_factor");
                     switch (parseReportHostItem.RiskFactor)
                     {
-                        case "High":
+                        case RiskFactor.Critical:
+                            parseHost.NumVulnCritical++;
+                            break;
+                        case RiskFactor.High:
                             parseHost.NumVulnHigh++;
                             break;
-                        case "Medium":
+                        case RiskFactor.Medium:
                             parseHost.NumVulnMedium++;
                             break;
-                        case "None":
-                        case "Low":
+                        case RiskFactor.Low:
                             parseHost.NumVulnLow++;
                             break;
                         default:
+                            parseHost.NumVulnNone++;
                             break;
                     }
 
