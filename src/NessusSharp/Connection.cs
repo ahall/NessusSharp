@@ -72,6 +72,7 @@ namespace NessusSharp
             // Nessus XMLrpc states it wants an ID of 0 when creating.
             request.Add("policy_id", Policy.INVALID_ID.ToString());
             request.Add("policy_name", policy.Name);
+            request.Add("policy_shared", "0");
 
             // Now copy all the params from the policy into the request.
             foreach (var parm in policy.Parameters)
